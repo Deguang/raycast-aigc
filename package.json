@@ -1,0 +1,66 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "cogview-generator",
+  "title": "CogView Generator",
+  "description": "Generate images using CogView-3-Flash from ZhipuAI",
+  "icon": "command-icon.png",
+  "author": "Antigravity",
+  "categories": [
+    "Design Tools",
+    "Productivity"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "generate",
+      "title": "Generate Image",
+      "subtitle": "CogView-3",
+      "description": "Generate an image from a text prompt",
+      "mode": "view"
+    },
+    {
+      "name": "history",
+      "title": "Generation History",
+      "description": "View past generations",
+      "mode": "view"
+    },
+    {
+      "name": "generate_video",
+      "title": "Generate Video",
+      "description": "Generate videos using CogVideoX",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "apiKey",
+      "type": "password",
+      "required": true,
+      "title": "ZhipuAI API Key",
+      "description": "API Key from open.bigmodel.cn",
+      "placeholder": "Enter your API Key..."
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.69.0",
+    "@raycast/utils": "^1.13.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.6",
+    "@types/node": "^25.0.10",
+    "@types/node-fetch": "^2.6.13",
+    "@types/react": "^19.2.9",
+    "eslint": "^8.51.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\\"prepublishOnly\\\" script and run \\\"npm publish\\\" again.\\nIf you wanted to publish it to the Raycast Store instead, use \\\"npm run publish\\\" instead.\\n\\n\" && exit 1",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}

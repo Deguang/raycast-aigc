@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "noEmit": true,
+    "strict": true,
+    "lib": ["es2022", "dom"],
+    "jsx": "react-jsx"
+  },
+  "include": ["src/**/*"]
+}
