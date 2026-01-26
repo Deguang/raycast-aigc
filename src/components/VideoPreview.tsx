@@ -44,7 +44,7 @@ export default function VideoPreview({ videoUrl, coverImageUrl, prompt }: VideoP
     <List isShowingDetail isLoading={isLoading} navigationTitle="Video Preview">
       <List.Item
         title={prompt}
-        icon={localVideoPath ? { file: localVideoPath } : Icon.Video}
+        icon={localVideoPath ? { fileIcon: localVideoPath } : Icon.Video}
         quickLook={localVideoPath ? { path: localVideoPath, name: prompt } : undefined}
         detail={
           <List.Item.Detail

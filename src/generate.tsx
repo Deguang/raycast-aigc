@@ -132,7 +132,7 @@ export default function Command({ initialPrompt, initialModel = "cogview-3-flash
 }
 
 function ResultView({ markdown, prompt, model, url }: { markdown: string, prompt: string, model: string, url: string }) {
-  const { push } = useNavigation();
+  const { pop } = useNavigation();
 
   async function handleCopyImage() {
     const toast = await showToast({ style: Toast.Style.Animated, title: "Downloading image..." });
@@ -149,7 +149,7 @@ function ResultView({ markdown, prompt, model, url }: { markdown: string, prompt
   }
 
   function handleRegenerate() {
-    push(<Command initialPrompt={prompt} initialModel={model} autoGenerate={false} />);
+    pop();
   }
 
   return (

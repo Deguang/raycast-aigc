@@ -188,7 +188,7 @@ function ResultView({ videoUrl, coverImageUrl, prompt }: { videoUrl: string, cov
     <List isShowingDetail isLoading={isLoading}>
       <List.Item
         title={prompt}
-        icon={localVideoPath ? { file: localVideoPath } : Icon.Video}
+        icon={localVideoPath ? { fileIcon: localVideoPath } : Icon.Video}
         quickLook={localVideoPath ? { path: localVideoPath, name: prompt } : undefined}
         detail={
           <List.Item.Detail
