@@ -13,12 +13,22 @@ export async function downloadToTemp(url: string): Promise<string> {
     const filePath = path.join(tempDir, filename);
 
     if (fs.existsSync(filePath)) {
-        return filePath;
+        const stats = fs.statSync(filePath);
+        if (stats.size > 0) {
+            return filePath;
+        }
+        // If file exists but is empty, delete it and re-download
+        fs.unlinkSync(filePath);
     }
 
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`Failed to download file: ${response.statusText}`);
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (contentType && !contentType.startsWith("image/") && !contentType.startsWith("video/")) {
+        throw new Error(`Invalid content type: ${contentType}`);
     }
 
     const buffer = await response.arrayBuffer();

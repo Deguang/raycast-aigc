@@ -1,4 +1,4 @@
-import { Action, ActionPanel, List, useNavigation, showToast, Toast, Clipboard, Icon, Detail } from "@raycast/api";
+import { Action, ActionPanel, List, useNavigation, showToast, Toast, Clipboard, Icon, Detail, showInFinder } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { getHistory, clearHistory } from "./storage";
 import type { GenerationHistory } from "./types";
@@ -48,7 +48,7 @@ export default function Command() {
       const filePath = await downloadToTemp(url);
       await Clipboard.copy({ file: filePath });
       toast.style = Toast.Style.Success;
-      toast.title = "Copied to Clipboard!";
+      toast.title = "Image copied to clipboard!";
     } catch (error) {
       toast.style = Toast.Style.Failure;
       toast.title = "Failed to copy";
@@ -91,45 +91,61 @@ export default function Command() {
             }
             actions={
               <ActionPanel>
-                <Action.Push
-                    title="View Details"
-                    icon={Icon.Info}
-                    target={<GenerationDetails item={item} />}
-                />
-                {item.type === "video" && (
+                <ActionPanel.Section title="Quick Actions">
+                  {item.type === "image" && (
+                    <Action 
+                      title="Copy Image" 
+                      icon={Icon.Clipboard}
+                      shortcut={{ modifiers: ["cmd"], key: "c" }}
+                      onAction={() => {
+                        console.log("[CopyImage] Action triggered for:", item.url);
+                        handleCopyImage(item.url);
+                      }} 
+                    />
+                  )}
                   <Action.Push
-                    title="Preview Video"
-                    icon={Icon.Eye}
-                    target={
-                      <VideoPreview 
-                        videoUrl={item.url} 
-                        coverImageUrl={item.coverImageUrl} 
-                        prompt={item.prompt} 
-                      />
-                    }
+                      title="View Details"
+                      icon={Icon.Info}
+                      shortcut={{ modifiers: ["cmd"], key: "d" }}
+                      target={<GenerationDetails item={item} />}
                   />
-                )}
-                {item.type === "image" && (
-                  <>
+                  {item.type === "video" && (
+                    <Action.Push
+                      title="Preview Video"
+                      icon={Icon.Eye}
+                      target={
+                        <VideoPreview 
+                          videoUrl={item.url} 
+                          coverImageUrl={item.coverImageUrl} 
+                          prompt={item.prompt} 
+                        />
+                      }
+                    />
+                  )}
+                </ActionPanel.Section>
+                <ActionPanel.Section>
+                  {item.type === "image" && (
                     <Action 
                       title="Regenerate" 
-                      icon="command-icon.png" 
+                      icon={Icon.ArrowClockwise}
+                      shortcut={{ modifiers: ["cmd"], key: "r" }}
                       onAction={() => push(<GenerateCommand initialPrompt={item.prompt} initialModel={item.model} autoGenerate={false} />)} 
                     />
-                    <Action title="Copy Image" icon="command-icon.png" onAction={() => handleCopyImage(item.url)} />
-                  </>
-                )}
-                <Action.OpenInBrowser url={item.url} title="Open in Browser" />
-                <Action.CopyToClipboard content={item.url} title="Copy URL" />
-                <Action 
-                  title="Copy Prompt" 
-                  icon={Icon.Clipboard} 
-                  onAction={async () => {
-                    await Clipboard.copy(item.prompt);
-                    await showToast({ style: Toast.Style.Success, title: "Copied to Clipboard!" });
-                  }}
-                />
-                <Action title="Clear History" onAction={handleClearHistory} style={Action.Style.Destructive} />
+                  )}
+                  <Action.OpenInBrowser url={item.url} title="Open in Browser" />
+                  <Action.CopyToClipboard content={item.url} title="Copy URL" />
+                  <Action 
+                    title="Copy Prompt" 
+                    icon={Icon.Clipboard} 
+                    onAction={async () => {
+                      await Clipboard.copy(item.prompt);
+                      await showToast({ style: Toast.Style.Success, title: "Copied to Clipboard!" });
+                    }}
+                  />
+                </ActionPanel.Section>
+                <ActionPanel.Section>
+                  <Action title="Clear History" onAction={handleClearHistory} style={Action.Style.Destructive} />
+                </ActionPanel.Section>
               </ActionPanel>
             }
           />
@@ -160,6 +176,43 @@ function GenerationDetails({ item }: { item: GenerationHistory }) {
                        await showToast({ style: Toast.Style.Success, title: "Copied to Clipboard!" });
                    }} />
                    <Action.OpenInBrowser url={item.url} title="Open Resource" />
+                   {item.type === "image" && (
+                     <Action 
+                       title="Copy Image" 
+                       icon={Icon.Clipboard} 
+                       shortcut={{ modifiers: ["cmd"], key: "c" }}
+                       onAction={async () => {
+                         const toast = await showToast({ style: Toast.Style.Animated, title: "Downloading image..." });
+                         try {
+                           const filePath = await downloadToTemp(item.url);
+                           await Clipboard.copy({ file: filePath });
+                           toast.style = Toast.Style.Success;
+                           toast.title = "Image copied to clipboard!";
+                         } catch (error) {
+                           toast.style = Toast.Style.Failure;
+                           toast.title = "Failed to copy";
+                           toast.message = error instanceof Error ? error.message : String(error);
+                         }
+                       }} 
+                     />
+                   )}
+                   <Action 
+                      title="Open Image File Location" 
+                      icon={Icon.Finder} 
+                      onAction={async () => {
+                        const toast = await showToast({ style: Toast.Style.Animated, title: "Locating file..." });
+                         try {
+                           const filePath = await downloadToTemp(item.url);
+                           await showInFinder(filePath);
+                           toast.style = Toast.Style.Success;
+                           toast.title = "File revealed in Finder";
+                         } catch (error) {
+                           toast.style = Toast.Style.Failure;
+                           toast.title = "Failed to locate";
+                           toast.message = error instanceof Error ? error.message : String(error);
+                         }
+                      }}
+                   />
                 </ActionPanel>
             }
         />

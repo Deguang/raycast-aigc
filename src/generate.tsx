@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Form, showToast, Toast, Detail, useNavigation, getPreferenceValues, Clipboard } from "@raycast/api";
+import { Action, ActionPanel, Form, showToast, Toast, Detail, useNavigation, getPreferenceValues, Clipboard, Icon } from "@raycast/api";
 import { useState, useEffect, useRef } from "react";
 import fetch from "node-fetch";
 import { addToHistory } from "./storage";
@@ -140,7 +140,7 @@ function ResultView({ markdown, prompt, model, url }: { markdown: string, prompt
       const filePath = await downloadToTemp(url);
       await Clipboard.copy({ file: filePath });
       toast.style = Toast.Style.Success;
-      toast.title = "Copied to Clipboard!";
+      toast.title = "Image copied to clipboard!";
     } catch (error) {
       toast.style = Toast.Style.Failure;
       toast.title = "Failed to copy";
@@ -158,10 +158,27 @@ function ResultView({ markdown, prompt, model, url }: { markdown: string, prompt
       navigationTitle="Generated Image"
       actions={
         <ActionPanel>
-          <Action title="Regenerate" icon="command-icon.png" onAction={handleRegenerate} />
-          <Action title="Copy Image" icon="command-icon.png" onAction={handleCopyImage} />
-          <Action.OpenInBrowser url={url} title="Open in Browser" />
-          <Action.CopyToClipboard content={url} title="Copy URL" />
+          <ActionPanel.Section title="Quick Actions">
+            <Action 
+              title="Copy Image" 
+              icon={Icon.Clipboard}
+              shortcut={{ modifiers: ["cmd"], key: "c" }}
+              onAction={() => {
+                console.log("[CopyImage] ResultView: Action triggered for:", url);
+                handleCopyImage();
+              }} 
+            />
+            <Action 
+              title="Regenerate" 
+              icon={Icon.ArrowClockwise}
+              shortcut={{ modifiers: ["cmd"], key: "r" }}
+              onAction={handleRegenerate} 
+            />
+          </ActionPanel.Section>
+          <ActionPanel.Section>
+            <Action.OpenInBrowser url={url} title="Open in Browser" />
+            <Action.CopyToClipboard content={url} title="Copy URL" />
+          </ActionPanel.Section>
         </ActionPanel>
       }
       metadata={
