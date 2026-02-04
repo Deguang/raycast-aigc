@@ -91,61 +91,53 @@ export default function Command() {
             }
             actions={
               <ActionPanel>
-                <ActionPanel.Section title="Quick Actions">
-                  {item.type === "image" && (
-                    <Action 
-                      title="Copy Image" 
-                      icon={Icon.Clipboard}
-                      shortcut={{ modifiers: ["cmd"], key: "c" }}
-                      onAction={() => {
-                        console.log("[CopyImage] Action triggered for:", item.url);
-                        handleCopyImage(item.url);
-                      }} 
-                    />
-                  )}
+                <Action.Push
+                    title="View Details"
+                    icon={Icon.Info}
+                    target={<GenerationDetails item={item} />}
+                />
+                {item.type === "video" && (
                   <Action.Push
-                      title="View Details"
-                      icon={Icon.Info}
-                      shortcut={{ modifiers: ["cmd"], key: "d" }}
-                      target={<GenerationDetails item={item} />}
+                    title="Preview Video"
+                    icon={Icon.Eye}
+                    target={
+                      <VideoPreview 
+                        videoUrl={item.url} 
+                        coverImageUrl={item.coverImageUrl} 
+                        prompt={item.prompt} 
+                      />
+                    }
                   />
-                  {item.type === "video" && (
-                    <Action.Push
-                      title="Preview Video"
-                      icon={Icon.Eye}
-                      target={
-                        <VideoPreview 
-                          videoUrl={item.url} 
-                          coverImageUrl={item.coverImageUrl} 
-                          prompt={item.prompt} 
-                        />
-                      }
-                    />
-                  )}
-                </ActionPanel.Section>
-                <ActionPanel.Section>
-                  {item.type === "image" && (
-                    <Action 
-                      title="Regenerate" 
-                      icon={Icon.ArrowClockwise}
-                      shortcut={{ modifiers: ["cmd"], key: "r" }}
-                      onAction={() => push(<GenerateCommand initialPrompt={item.prompt} initialModel={item.model} autoGenerate={false} />)} 
-                    />
-                  )}
-                  <Action.OpenInBrowser url={item.url} title="Open in Browser" />
-                  <Action.CopyToClipboard content={item.url} title="Copy URL" />
+                )}
+                {item.type === "image" && (
                   <Action 
-                    title="Copy Prompt" 
-                    icon={Icon.Clipboard} 
-                    onAction={async () => {
-                      await Clipboard.copy(item.prompt);
-                      await showToast({ style: Toast.Style.Success, title: "Copied to Clipboard!" });
-                    }}
+                    title="Regenerate" 
+                    icon="command-icon.png" 
+                    onAction={() => push(<GenerateCommand initialPrompt={item.prompt} initialModel={item.model} autoGenerate={false} />)} 
                   />
-                </ActionPanel.Section>
-                <ActionPanel.Section>
-                  <Action title="Clear History" onAction={handleClearHistory} style={Action.Style.Destructive} />
-                </ActionPanel.Section>
+                )}
+                {item.type === "image" && (
+                  <Action 
+                    title="Copy Image" 
+                    icon={Icon.Clipboard}
+                    shortcut={{ modifiers: ["cmd", "shift"], key: "c" }}
+                    onAction={() => {
+                      console.log("[CopyImage] Action triggered for:", item.url);
+                      handleCopyImage(item.url);
+                    }} 
+                  />
+                )}
+                <Action.OpenInBrowser url={item.url} title="Open in Browser" />
+                <Action.CopyToClipboard content={item.url} title="Copy URL" />
+                <Action 
+                  title="Copy Prompt" 
+                  icon={Icon.Clipboard} 
+                  onAction={async () => {
+                    await Clipboard.copy(item.prompt);
+                    await showToast({ style: Toast.Style.Success, title: "Copied to Clipboard!" });
+                  }}
+                />
+                <Action title="Clear History" onAction={handleClearHistory} style={Action.Style.Destructive} />
               </ActionPanel>
             }
           />

@@ -158,27 +158,18 @@ function ResultView({ markdown, prompt, model, url }: { markdown: string, prompt
       navigationTitle="Generated Image"
       actions={
         <ActionPanel>
-          <ActionPanel.Section title="Quick Actions">
-            <Action 
-              title="Copy Image" 
-              icon={Icon.Clipboard}
-              shortcut={{ modifiers: ["cmd"], key: "c" }}
-              onAction={() => {
-                console.log("[CopyImage] ResultView: Action triggered for:", url);
-                handleCopyImage();
-              }} 
-            />
-            <Action 
-              title="Regenerate" 
-              icon={Icon.ArrowClockwise}
-              shortcut={{ modifiers: ["cmd"], key: "r" }}
-              onAction={handleRegenerate} 
-            />
-          </ActionPanel.Section>
-          <ActionPanel.Section>
-            <Action.OpenInBrowser url={url} title="Open in Browser" />
-            <Action.CopyToClipboard content={url} title="Copy URL" />
-          </ActionPanel.Section>
+          <Action title="Regenerate" icon="command-icon.png" onAction={handleRegenerate} />
+          <Action 
+            title="Copy Image" 
+            icon={Icon.Clipboard}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "c" }}
+            onAction={() => {
+              console.log("[CopyImage] ResultView: Action triggered for:", url);
+              handleCopyImage();
+            }} 
+          />
+          <Action.OpenInBrowser url={url} title="Open in Browser" />
+          <Action.CopyToClipboard content={url} title="Copy URL" />
         </ActionPanel>
       }
       metadata={
